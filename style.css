@@ -1,4 +1,4 @@
-* {
+﻿* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -1042,10 +1042,8 @@ footer {
         padding: 14px 16px;
     }
 }
+/* ===== MOTHERS DAY THEME ===== */
 
-
-
-/* Mothers Day Theme Styling */
 .viewer-section-wrap {
     display: none;
 }
@@ -1069,25 +1067,30 @@ footer {
     min-height: 100vh;
     text-align: center;
     padding: 30px 16px;
+    box-sizing: border-box;
 }
 
-.viewer-mode footer {
-    display: none;
+.viewer-mode header,
+.viewer-mode footer,
+.viewer-mode .upload-section,
+.viewer-mode .result-section {
+    display: none !important;
 }
 
 .viewer-card {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-radius: 28px;
-    padding: 40px 30px;
-    max-width: 420px;
+    padding: 40px 28px;
+    max-width: 380px;
     width: 100%;
     margin: 0 auto;
-    box-shadow:
-        0 20px 60px rgba(216, 27, 96, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+    box-shadow: 0 20px 60px rgba(216, 27, 96, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .viewer-card::before {
@@ -1101,19 +1104,19 @@ footer {
 }
 
 .viewer-flowers-row {
-    font-size: 1.4rem;
-    letter-spacing: 8px;
-    margin: 8px 0;
-    opacity: 0.8;
+    font-size: 1.3rem;
+    letter-spacing: 6px;
+    margin: 10px 0;
+    opacity: 0.85;
 }
 
 .school-name {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 800;
     color: #ad1457;
     text-transform: uppercase;
     letter-spacing: 4px;
-    margin: 15px 0 8px;
+    margin: 16px 0 8px;
 }
 
 .viewer-divider {
@@ -1124,7 +1127,7 @@ footer {
 }
 
 .mothers-day-title {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: #c2185b;
     font-weight: 300;
     margin: 5px 0;
@@ -1132,7 +1135,7 @@ footer {
 }
 
 .viewer-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #e91e63;
     font-style: italic;
     margin-bottom: 20px;
@@ -1143,15 +1146,15 @@ footer {
     background: linear-gradient(135deg, #fce4ec, #f8bbd0);
     border-radius: 16px;
     padding: 14px 24px;
-    margin: 0 auto 20px;
+    margin: 0 auto 22px;
     display: inline-block;
-    min-width: 200px;
-    border: 1px solid rgba(216, 27, 96, 0.15);
+    min-width: 180px;
+    border: 1px solid rgba(216, 27, 96, 0.12);
 }
 
 .viewer-name-label {
     display: block;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: #ad1457;
@@ -1160,7 +1163,7 @@ footer {
 }
 
 .viewer-name-badge h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     color: #880e4f;
     font-weight: 800;
     margin: 0;
@@ -1170,22 +1173,25 @@ footer {
 .mini-player {
     display: flex;
     align-items: center;
-    gap: 14px;
-    background: #fff;
-    padding: 12px 18px;
+    gap: 12px;
+    background: #ffffff;
+    padding: 10px 16px;
     border-radius: 50px;
-    box-shadow: 0 4px 20px rgba(216, 27, 96, 0.1);
-    border: 1px solid rgba(216, 27, 96, 0.1);
-    max-width: 340px;
+    box-shadow: 0 4px 16px rgba(216, 27, 96, 0.1);
+    border: 1px solid rgba(216, 27, 96, 0.08);
+    max-width: 300px;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 .mini-play-btn {
     background: #d81b60;
     color: #fff;
     border: none;
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1193,7 +1199,13 @@ footer {
     cursor: pointer;
     flex-shrink: 0;
     transition: all 0.25s ease;
-    box-shadow: 0 3px 12px rgba(216, 27, 96, 0.35);
+    box-shadow: 0 3px 10px rgba(216, 27, 96, 0.35);
+    padding: 0;
+}
+
+.mini-play-btn svg {
+    width: 20px;
+    height: 20px;
 }
 
 .mini-play-btn:hover {
@@ -1209,7 +1221,8 @@ footer {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
+    min-width: 0;
 }
 
 .mini-progress-bar {
@@ -1241,7 +1254,7 @@ footer {
 .happy-mothers-day {
     margin-top: 22px;
     margin-bottom: 5px;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: #c2185b;
     font-family: 'Georgia', serif;
     font-style: italic;
@@ -1254,19 +1267,6 @@ footer {
     50% { opacity: 1; transform: scale(1.03); }
 }
 
-@media (max-width: 480px) {
-    .viewer-card {
-        padding: 30px 20px;
-        border-radius: 22px;
-    }
-    .mothers-day-title {
-        font-size: 1.3rem;
-    }
-    .viewer-name-badge h2 {
-        font-size: 1.3rem;
-    }
-}
-
 .btn-link {
     background: none;
     border: none;
@@ -1275,4 +1275,21 @@ footer {
     cursor: pointer;
     padding: 0;
     font-family: inherit;
+}
+
+@media (max-width: 480px) {
+    .viewer-card {
+        padding: 28px 18px;
+        border-radius: 22px;
+        margin: 0 8px;
+    }
+    .mothers-day-title {
+        font-size: 1.25rem;
+    }
+    .viewer-name-badge h2 {
+        font-size: 1.2rem;
+    }
+    .mini-player {
+        max-width: 280px;
+    }
 }
