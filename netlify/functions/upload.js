@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
         const githubToken = process.env.GITHUB_TOKEN;
         const owner = process.env.GITHUB_OWNER || 'pxyyyyyyy-creator';
         const repo = process.env.GITHUB_REPO || 'audios-qr';
-        const branch = process.env.GITHUB_BRANCH || 'master';
+        const branch = process.env.GITHUB_BRANCH || 'audios-storage';
         const path = `uploads/${filename}`;
 
         if (!githubToken) {

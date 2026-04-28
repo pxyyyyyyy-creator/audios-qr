@@ -1,8 +1,7 @@
 node_modules/
-*.log
-.env
+.DS_Store
 uploads/
-*.mp3
-*.wav
-*.opus
-*.ogg
+config.json
+.env
+.netlify/
+dist/
