@@ -327,7 +327,7 @@ function checkViewerMode() {
         const devMsg = document.getElementById('devMessage');
         if (devMsg) devMsg.style.display = 'none';
         
-        viewerSection.style.display = 'block';
+        viewerSection.style.display = 'flex';
         viewerName.textContent = nameStr;
         viewerAudio.src = playUrl;
         
