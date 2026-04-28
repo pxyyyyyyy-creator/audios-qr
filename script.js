@@ -10,6 +10,8 @@ let cropStart = 0;
 let cropEnd = 0;
 let croppedBlob = null;
 let previewSource = null;
+let currentPlayhead = -1;
+let animationId = null;
 
 let audioInput, fileDrop, fileName, audioName, generateBtn, resultSection,
     audioPlayer, displayName, downloadBtn, shareBtn, installSection, installBtn,
@@ -180,7 +182,6 @@ function initApp() {
         }
         
         displayName.textContent = currentAudioName;
-        audioPlayer.src = URL.createObjectURL(blobToShare);
         resultSection.style.display = 'block';
         resultSection.scrollIntoView({ behavior: 'smooth' });
     });
@@ -319,26 +320,46 @@ function renderWaveform() {
     const width = canvas.width;
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = '#f5f5f5';
+    
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, width, height);
+
     const channelData = audioBuffer.getChannelData(0);
-    const step = Math.ceil(channelData.length / width);
+    const barWidth = 2;
+    const gap = 1;
+    const barCount = Math.floor(width / (barWidth + gap));
+    const step = Math.floor(channelData.length / barCount);
     const amp = height / 2;
-    ctx.fillStyle = '#000000';
-    for (let i = 0; i < width; i++) {
-        let min = 1.0, max = -1.0;
+
+    for (let i = 0; i < barCount; i++) {
+        let max = 0;
         for (let j = 0; j < step; j++) {
-            const datum = channelData[i * step + j];
-            if (datum < min) min = datum;
+            const datum = Math.abs(channelData[i * step + j]);
             if (datum > max) max = datum;
         }
-        ctx.fillRect(i, (1 + min) * amp, 1, Math.max(1, (max - min) * amp));
+        
+        const x = i * (barWidth + gap);
+        const barHeight = Math.max(2, max * amp * 1.5);
+        const y = amp - barHeight / 2;
+
+        const timeAtBar = (i / barCount) * audioDuration;
+        const isSelected = timeAtBar >= cropStart && timeAtBar <= cropEnd;
+
+        ctx.fillStyle = isSelected ? '#000000' : '#d4d4d4';
+        ctx.fillRect(x, y, barWidth, barHeight);
     }
+
     const startPixel = (cropStart / audioDuration) * width;
     const endPixel = (cropEnd / audioDuration) * width;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
     ctx.fillRect(0, 0, startPixel, height);
     ctx.fillRect(endPixel, 0, width - endPixel, height);
+
+    if (currentPlayhead >= 0) {
+        const playheadX = (currentPlayhead / audioDuration) * width;
+        ctx.fillStyle = '#ff0000';
+        ctx.fillRect(playheadX, 0, 2, height);
+    }
 }
 
 function updateCropFromSliders() {
@@ -404,18 +425,37 @@ function playBuffer(buffer) {
     }
     if (previewSource) {
         try { previewSource.stop(); } catch(e) {}
+        cancelAnimationFrame(animationId);
     }
+    
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
     source.connect(audioContext.destination);
     source.start(0);
     previewSource = source;
+
+    const startTime = audioContext.currentTime;
+    const duration = buffer.duration;
+    
+    function updateProgress() {
+        const elapsed = audioContext.currentTime - startTime;
+        if (elapsed < duration) {
+            currentPlayhead = cropStart + elapsed;
+            renderWaveform();
+            animationId = requestAnimationFrame(updateProgress);
+        } else {
+            currentPlayhead = -1;
+            renderWaveform();
+        }
+    }
+    
+    updateProgress();
+
     setTimeout(() => {
         if (previewSource === source) {
-            try { source.stop(); } catch(e) {}
             previewSource = null;
         }
-    }, buffer.duration * 1000);
+    }, duration * 1000);
 }
 
 function audioBufferToWav(buffer) {
