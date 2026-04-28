@@ -15,7 +15,7 @@ let audioInput, fileDrop, fileName, audioName, generateBtn, resultSection,
     audioPlayer, displayName, downloadBtn, shareBtn, installSection, installBtn,
     cropSection, waveformCanvas, startSlider, endSlider, startTimeInput,
     endTimeInput, durationDisplay, previewBtn, resetCropBtn,
-    mainHeader, uploadSection, viewerSection, viewerName, viewerAudio, createOwnBtn;
+    mainHeader, uploadSection, viewerSection, viewerName, viewerAudio;
 
 document.addEventListener('DOMContentLoaded', () => {
     audioInput = document.getElementById('audioInput');
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     viewerSection = document.getElementById('viewerSection');
     viewerName = document.getElementById('viewerName');
     viewerAudio = document.getElementById('viewerAudio');
-    createOwnBtn = document.getElementById('createOwnBtn');
 
     initApp();
 });
@@ -220,10 +219,6 @@ function initApp() {
             copyToClipboard(currentShareLink);
             alert('Link do visualizador copiado para a área de transferência!');
         }
-    });
-
-    createOwnBtn.addEventListener('click', () => {
-        window.location.href = window.location.href.split('?')[0];
     });
 
     window.addEventListener('beforeinstallprompt', (e) => {
