@@ -89,14 +89,31 @@
                 </div>
             </div>
 
-            <div id="viewerSection" style="display: none; text-align: center; padding: 40px 20px;">
-                <h2 id="viewerName" style="margin-bottom: 20px; font-weight: bold; color: #1a1a1a;"></h2>
-                <audio id="viewerAudio" controls style="width: 100%; max-width: 400px; margin: 0 auto; display: block;"></audio>
+            <div id="viewerSection" style="display: none; text-align: center; padding: 60px 20px;">
+                <h2 id="viewerName" style="margin-bottom: 40px; font-weight: 800; color: #000; font-size: 2.5rem; letter-spacing: -1px;"></h2>
+                
+                <div class="custom-player">
+                    <button id="playPauseBtn" class="play-btn">
+                        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M8 5v14l11-7z"/></svg>
+                        <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                    </button>
+                    
+                    <div class="progress-area">
+                        <div class="progress-bar">
+                            <div id="playerProgress" class="progress-fill"></div>
+                        </div>
+                        <div class="time-info">
+                            <span id="playerCurrentTime">0:00</span>
+                            <span id="playerTotalTime">0:00</span>
+                        </div>
+                    </div>
+                    
+                    <audio id="viewerAudio" style="display: none;"></audio>
+                </div>
             </div>
         </main>
 
         <footer>
-            <p class="developer">desenvolvido por Emmanuel</p>
         </footer>
     </div>
 

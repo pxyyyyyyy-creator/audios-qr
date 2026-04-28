@@ -17,7 +17,8 @@ let audioInput, fileDrop, fileName, audioName, generateBtn, resultSection,
     audioPlayer, displayName, downloadBtn, shareBtn, installSection, installBtn,
     cropSection, waveformCanvas, startSlider, endSlider, startTimeInput,
     endTimeInput, durationDisplay, previewBtn, resetCropBtn,
-    mainHeader, uploadSection, viewerSection, viewerName, viewerAudio;
+    mainHeader, uploadSection, viewerSection, viewerName, viewerAudio,
+    playPauseBtn, playIcon, pauseIcon, playerProgress, playerCurrentTime, playerTotalTime;
 
 document.addEventListener('DOMContentLoaded', () => {
     audioInput = document.getElementById('audioInput');
@@ -47,6 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
     viewerSection = document.getElementById('viewerSection');
     viewerName = document.getElementById('viewerName');
     viewerAudio = document.getElementById('viewerAudio');
+    
+    playPauseBtn = document.getElementById('playPauseBtn');
+    playIcon = document.getElementById('playIcon');
+    pauseIcon = document.getElementById('pauseIcon');
+    playerProgress = document.getElementById('playerProgress');
+    playerCurrentTime = document.getElementById('playerCurrentTime');
+    playerTotalTime = document.getElementById('playerTotalTime');
 
     initApp();
 });
@@ -251,7 +259,55 @@ function initApp() {
 
     window.addEventListener('load', () => {
         checkViewerMode();
+        setupCustomPlayer();
     });
+}
+
+function setupCustomPlayer() {
+    if (!playPauseBtn) return;
+
+    playPauseBtn.addEventListener('click', () => {
+        if (viewerAudio.paused) {
+            viewerAudio.play();
+        } else {
+            viewerAudio.pause();
+        }
+    });
+
+    viewerAudio.addEventListener('play', () => {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+    });
+
+    viewerAudio.addEventListener('pause', () => {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+    });
+
+    viewerAudio.addEventListener('timeupdate', () => {
+        const percent = (viewerAudio.currentTime / viewerAudio.duration) * 100;
+        playerProgress.style.width = percent + '%';
+        playerCurrentTime.textContent = formatTime(viewerAudio.currentTime);
+    });
+
+    viewerAudio.addEventListener('loadedmetadata', () => {
+        playerTotalTime.textContent = formatTime(viewerAudio.duration);
+    });
+
+    document.querySelector('.progress-bar').addEventListener('click', (e) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const width = rect.width;
+        const percent = x / width;
+        viewerAudio.currentTime = percent * viewerAudio.duration;
+    });
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds)) return "0:00";
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return min + ":" + (sec < 10 ? "0" : "") + sec;
 }
 
 function checkViewerMode() {
