@@ -320,6 +320,9 @@ function checkViewerMode() {
         uploadSection.style.display = 'none';
         resultSection.style.display = 'none';
         
+        const devMsg = document.getElementById('devMessage');
+        if (devMsg) devMsg.style.display = 'none';
+        
         viewerSection.style.display = 'block';
         viewerName.textContent = nameStr;
         viewerAudio.src = playUrl;
