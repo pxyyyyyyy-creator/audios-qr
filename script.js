@@ -130,28 +130,33 @@ function initApp() {
             qrImg.crossOrigin = 'Anonymous';
             qrImg.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width = 256;
-                canvas.height = 310;
+                canvas.width = 512;
+                canvas.height = 620;
                 const ctx = canvas.getContext('2d');
                 
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                ctx.drawImage(qrImg, 0, 0, 256, 256);
+                ctx.drawImage(qrImg, 0, 0, 512, 512);
                 
                 ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(1, 1, 254, 308);
+                ctx.lineWidth = 4;
+                ctx.strokeRect(2, 2, 508, 616);
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 20px Arial';
+                ctx.font = 'bold 40px Arial';
                 ctx.textAlign = 'center';
                 
                 let displayNameText = currentAudioName;
                 if (displayNameText.length > 20) {
                     displayNameText = displayNameText.substring(0, 18) + '...';
                 }
-                ctx.fillText(displayNameText, 128, 290);
+                ctx.fillText(displayNameText, 256, 580);
+                
+                // Mantém o tamanho visual menor na tela, mas preserva a resolução interna alta
+                canvas.style.maxWidth = '100%';
+                canvas.style.width = '256px';
+                canvas.style.height = 'auto';
                 
                 document.getElementById('qrcode').innerHTML = '';
                 document.getElementById('qrcode').appendChild(canvas);
@@ -164,7 +169,7 @@ function initApp() {
                 generateBtn.disabled = false;
                 generateBtn.textContent = 'Gerar QR Code';
             };
-            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(viewerLink)}`;
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=512x512&data=${encodeURIComponent(viewerLink)}`;
             
             currentShareLink = viewerLink;
             
