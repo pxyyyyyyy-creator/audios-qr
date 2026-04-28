@@ -1,0 +1,11 @@
+[build]
+  command = "echo 'Build complete'"
+  functions = "netlify/functions"
+
+[dev]
+  command = "node server-deploy.js"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
