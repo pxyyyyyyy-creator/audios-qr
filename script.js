@@ -55,9 +55,38 @@ document.addEventListener('DOMContentLoaded', () => {
     playerProgress = document.getElementById('playerProgress');
     playerCurrentTime = document.getElementById('playerCurrentTime');
     playerTotalTime = document.getElementById('playerTotalTime');
+    
+    document.getElementById('admBtn').addEventListener('click', handleAdmAction);
 
     initApp();
 });
+
+async function handleAdmAction() {
+    const password = prompt("Digite a senha de administrador para limpar todos os áudios:");
+    if (!password) return;
+    
+    if (confirm("TEM CERTEZA? Isso vai apagar todos os áudios já gerados e os QR Codes atuais deixarão de funcionar.")) {
+        const btn = document.getElementById('admBtn');
+        const originalText = btn.textContent;
+        btn.textContent = "Limpando...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch('/api/clear-storage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            const data = await res.json();
+            alert(data.message);
+        } catch (e) {
+            alert("Erro ao tentar limpar: " + e.message);
+        } finally {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
+    }
+}
 
 function initApp() {
     fileDrop.addEventListener('click', () => audioInput.click());
