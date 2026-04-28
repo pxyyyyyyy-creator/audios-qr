@@ -1,4 +1,4 @@
-﻿* {
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -1082,8 +1082,8 @@ footer {
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border-radius: 28px;
-    padding: 40px 28px;
-    max-width: 380px;
+    padding: 50px 36px;
+    max-width: 500px;
     width: 100%;
     margin: 0 auto;
     box-shadow: 0 20px 60px rgba(216, 27, 96, 0.15);
@@ -1104,14 +1104,14 @@ footer {
 }
 
 .viewer-flowers-row {
-    font-size: 1.3rem;
-    letter-spacing: 6px;
-    margin: 10px 0;
+    font-size: 1.6rem;
+    letter-spacing: 8px;
+    margin: 12px 0;
     opacity: 0.85;
 }
 
 .school-name {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 800;
     color: #ad1457;
     text-transform: uppercase;
@@ -1127,7 +1127,7 @@ footer {
 }
 
 .mothers-day-title {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     color: #c2185b;
     font-weight: 300;
     margin: 5px 0;
@@ -1135,7 +1135,7 @@ footer {
 }
 
 .viewer-subtitle {
-    font-size: 0.82rem;
+    font-size: 0.95rem;
     color: #e91e63;
     font-style: italic;
     margin-bottom: 20px;
@@ -1145,10 +1145,10 @@ footer {
 .viewer-name-badge {
     background: linear-gradient(135deg, #fce4ec, #f8bbd0);
     border-radius: 16px;
-    padding: 14px 24px;
-    margin: 0 auto 22px;
+    padding: 18px 32px;
+    margin: 0 auto 28px;
     display: inline-block;
-    min-width: 180px;
+    min-width: 220px;
     border: 1px solid rgba(216, 27, 96, 0.12);
 }
 
@@ -1163,7 +1163,7 @@ footer {
 }
 
 .viewer-name-badge h2 {
-    font-size: 1.4rem;
+    font-size: 1.7rem;
     color: #880e4f;
     font-weight: 800;
     margin: 0;
@@ -1173,13 +1173,13 @@ footer {
 .mini-player {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     background: #ffffff;
-    padding: 10px 16px;
+    padding: 14px 20px;
     border-radius: 50px;
     box-shadow: 0 4px 16px rgba(216, 27, 96, 0.1);
     border: 1px solid rgba(216, 27, 96, 0.08);
-    max-width: 300px;
+    max-width: 380px;
     margin: 0 auto;
     box-sizing: border-box;
 }
@@ -1252,9 +1252,9 @@ footer {
 }
 
 .happy-mothers-day {
-    margin-top: 22px;
-    margin-bottom: 5px;
-    font-size: 1.05rem;
+    margin-top: 28px;
+    margin-bottom: 8px;
+    font-size: 1.2rem;
     color: #c2185b;
     font-family: 'Georgia', serif;
     font-style: italic;
@@ -1279,17 +1279,17 @@ footer {
 
 @media (max-width: 480px) {
     .viewer-card {
-        padding: 28px 18px;
+        padding: 36px 22px;
         border-radius: 22px;
-        margin: 0 8px;
+        margin: 0 12px;
     }
     .mothers-day-title {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
     .viewer-name-badge h2 {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
     .mini-player {
-        max-width: 280px;
+        max-width: 320px;
     }
 }
