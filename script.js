@@ -353,14 +353,10 @@ function checkViewerMode() {
         uploadSection.style.display = 'none';
         resultSection.style.display = 'none';
         
-        const devMsg = document.getElementById('devMessage');
-        if (devMsg) devMsg.style.display = 'none';
-        
-        viewerSection.style.display = 'flex';
         viewerName.textContent = nameStr;
         viewerAudio.src = playUrl;
         
-        document.title = `${nameStr} - Áudio QR`;
+        document.title = `${nameStr} - Homenagem Dia das Mães`;
     }
 }
 
