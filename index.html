@@ -88,20 +88,29 @@
                 </div>
             </div>
 
-            <div id="viewerSection" style="display: none; text-align: center; padding: 60px 20px;">
-                <h2 id="viewerName" style="margin-bottom: 40px; font-weight: 800; color: #000; font-size: 2.5rem; letter-spacing: -1px;"></h2>
+            <div id="viewerSection" style="display: none; text-align: center; padding: 40px 20px; position: relative; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                <div class="mothers-day-decoration">
+                    <span class="flower">🌸</span>
+                    <span class="heart">❤️</span>
+                    <span class="flower">🌷</span>
+                </div>
+
+                <p class="school-name">ASBREMFO-SEDE</p>
+                <h1 class="mothers-day-title">Homenagem Especial</h1>
                 
-                <div class="custom-player">
-                    <button id="playPauseBtn" class="play-btn">
+                <h2 id="viewerName" style="margin-bottom: 30px; font-weight: 800; color: #d81b60; font-size: 2.2rem; letter-spacing: -1px;"></h2>
+                
+                <div class="custom-player mothers-day-player">
+                    <button id="playPauseBtn" class="play-btn-themed">
                         <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M8 5v14l11-7z"/></svg>
                         <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
                     </button>
                     
                     <div class="progress-area">
-                        <div class="progress-bar">
-                            <div id="playerProgress" class="progress-fill"></div>
+                        <div class="progress-bar-themed">
+                            <div id="playerProgress" class="progress-fill-themed"></div>
                         </div>
-                        <div class="time-info">
+                        <div class="time-info-themed">
                             <span id="playerCurrentTime">0:00</span>
                             <span id="playerTotalTime">0:00</span>
                         </div>
@@ -109,6 +118,8 @@
                     
                     <audio id="viewerAudio" style="display: none;"></audio>
                 </div>
+                
+                <p class="happy-mothers-day">Feliz Dia das Mães!</p>
             </div>
         </main>
 

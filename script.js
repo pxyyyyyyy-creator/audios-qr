@@ -294,13 +294,16 @@ function setupCustomPlayer() {
         playerTotalTime.textContent = formatTime(viewerAudio.duration);
     });
 
-    document.querySelector('.progress-bar').addEventListener('click', (e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const width = rect.width;
-        const percent = x / width;
-        viewerAudio.currentTime = percent * viewerAudio.duration;
-    });
+    const progressBar = document.querySelector('.progress-bar-themed') || document.querySelector('.progress-bar');
+    if (progressBar) {
+        progressBar.addEventListener('click', (e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const width = rect.width;
+            const percent = x / width;
+            viewerAudio.currentTime = percent * viewerAudio.duration;
+        });
+    }
 }
 
 function formatTime(seconds) {
@@ -316,6 +319,7 @@ function checkViewerMode() {
     const nameStr = urlParams.get('name') || 'Áudio Compartilhado';
 
     if (playUrl) {
+        document.body.classList.add('viewer-mode');
         mainHeader.style.display = 'none';
         uploadSection.style.display = 'none';
         resultSection.style.display = 'none';

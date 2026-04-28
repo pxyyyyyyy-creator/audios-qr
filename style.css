@@ -1116,3 +1116,102 @@ footer {
     font-weight: 600;
     font-family: monospace;
 }
+
+/* Mothers Day Theme Styling */
+.viewer-mode {
+    background: linear-gradient(135deg, #fff5f8 0%, #ffe0eb 100%) !important;
+}
+
+.school-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ad1457;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+}
+
+.mothers-day-title {
+    font-size: 1.2rem;
+    color: #f06292;
+    font-style: italic;
+    margin-bottom: 25px;
+    font-weight: 400;
+}
+
+.happy-mothers-day {
+    margin-top: 40px;
+    font-size: 1.5rem;
+    color: #d81b60;
+    font-family: 'Georgia', serif;
+    font-style: italic;
+    font-weight: bold;
+    animation: heartBeat 2s infinite;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.mothers-day-decoration {
+    margin-bottom: 20px;
+    font-size: 2rem;
+    display: flex;
+    gap: 15px;
+}
+
+/* Enhanced Themed Player */
+.mothers-day-player {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(216, 27, 96, 0.2) !important;
+    padding: 35px !important;
+    border-radius: 30px !important;
+    box-shadow: 0 15px 45px rgba(216, 27, 96, 0.1) !important;
+}
+
+.play-btn-themed {
+    background: #d81b60 !important;
+    color: #fff !important;
+    border: none;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 25px rgba(216, 27, 96, 0.4);
+}
+
+.play-btn-themed:hover {
+    transform: scale(1.1) rotate(5deg);
+    background: #ad1457 !important;
+}
+
+.progress-bar-themed {
+    width: 100%;
+    height: 8px;
+    background: rgba(216, 27, 96, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.progress-fill-themed {
+    height: 100%;
+    background: #d81b60;
+    width: 0%;
+}
+
+.time-info-themed {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #ad1457;
+    margin-top: 8px;
+    font-weight: 700;
+}
