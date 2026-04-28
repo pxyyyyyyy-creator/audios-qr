@@ -88,38 +88,42 @@
                 </div>
             </div>
 
-            <div id="viewerSection" style="display: none; text-align: center; padding: 40px 20px; position: relative; min-height: 80vh; flex-direction: column; justify-content: center; align-items: center;">
-                <div class="mothers-day-decoration">
-                    <span class="flower">🌸</span>
-                    <span class="heart">❤️</span>
-                    <span class="flower">🌷</span>
+            <div id="viewerSection" style="display: none; text-align: center; padding: 30px 16px; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
+                
+                <div class="viewer-card">
+                    <div class="viewer-flowers-row">🌸 🌷 🌺 🌹 🌻</div>
+                    
+                    <p class="school-name">ASBREMFO-SEDE</p>
+                    <div class="viewer-divider"></div>
+                    <h1 class="mothers-day-title">Dia das Mães</h1>
+                    <p class="viewer-subtitle">Uma homenagem especial para você</p>
+                    
+                    <div class="viewer-name-badge">
+                        <span class="viewer-name-label">Aluno(a)</span>
+                        <h2 id="viewerName"></h2>
+                    </div>
+
+                    <div class="mini-player">
+                        <button id="playPauseBtn" class="mini-play-btn">
+                            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
+                            <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                        </button>
+                        <div class="mini-progress-area">
+                            <div class="mini-progress-bar">
+                                <div id="playerProgress" class="mini-progress-fill"></div>
+                            </div>
+                            <div class="mini-time-info">
+                                <span id="playerCurrentTime">0:00</span>
+                                <span id="playerTotalTime">0:00</span>
+                            </div>
+                        </div>
+                        <audio id="viewerAudio" style="display: none;"></audio>
+                    </div>
+
+                    <p class="happy-mothers-day">❤️ Feliz Dia das Mães! ❤️</p>
+                    <div class="viewer-flowers-row">🌸 🌷 🌺 🌹 🌻</div>
                 </div>
 
-                <p class="school-name">ASBREMFO-SEDE</p>
-                <h1 class="mothers-day-title">Homenagem Especial</h1>
-                
-                <h2 id="viewerName" style="margin-bottom: 30px; font-weight: 800; color: #d81b60; font-size: 2.2rem; letter-spacing: -1px;"></h2>
-                
-                <div class="custom-player mothers-day-player">
-                    <button id="playPauseBtn" class="play-btn-themed">
-                        <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M8 5v14l11-7z"/></svg>
-                        <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="32" height="32" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                    </button>
-                    
-                    <div class="progress-area">
-                        <div class="progress-bar-themed">
-                            <div id="playerProgress" class="progress-fill-themed"></div>
-                        </div>
-                        <div class="time-info-themed">
-                            <span id="playerCurrentTime">0:00</span>
-                            <span id="playerTotalTime">0:00</span>
-                        </div>
-                    </div>
-                    
-                    <audio id="viewerAudio" style="display: none;"></audio>
-                </div>
-                
-                <p class="happy-mothers-day">Feliz Dia das Mães!</p>
             </div>
         </main>
 

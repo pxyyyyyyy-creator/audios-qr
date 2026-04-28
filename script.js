@@ -294,7 +294,7 @@ function setupCustomPlayer() {
         playerTotalTime.textContent = formatTime(viewerAudio.duration);
     });
 
-    const progressBar = document.querySelector('.progress-bar-themed') || document.querySelector('.progress-bar');
+    const progressBar = document.querySelector('.mini-progress-bar') || document.querySelector('.progress-bar-themed') || document.querySelector('.progress-bar');
     if (progressBar) {
         progressBar.addEventListener('click', (e) => {
             const rect = e.currentTarget.getBoundingClientRect();
