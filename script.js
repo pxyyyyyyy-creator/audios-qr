@@ -262,7 +262,7 @@ function initApp() {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installSection.style.display = 'block';
+        installSection.style.display = 'flex';
     });
 
     installBtn.addEventListener('click', async () => {
@@ -288,6 +288,7 @@ function initApp() {
 
     window.addEventListener('load', () => {
         checkViewerMode();
+        checkSharedFile();
         setupCustomPlayer();
     });
 }
@@ -360,11 +361,46 @@ function checkViewerMode() {
     }
 }
 
+async function checkSharedFile() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('shared') === '1') {
+        const file = await loadSharedFileFromDB();
+        if (file) {
+            handleAudioFile(file);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+}
+
+function loadSharedFileFromDB() {
+    return new Promise((resolve) => {
+        const request = indexedDB.open('AudioQRDB', 1);
+        request.onsuccess = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains('sharedFiles')) {
+                return resolve(null);
+            }
+            const tx = db.transaction('sharedFiles', 'readwrite');
+            const store = tx.objectStore('sharedFiles');
+            const getReq = store.get('latest');
+            getReq.onsuccess = () => {
+                if (getReq.result && getReq.result.file) {
+                    const file = getReq.result.file;
+                    store.delete('latest');
+                    resolve(file);
+                } else {
+                    resolve(null);
+                }
+            };
+            getReq.onerror = () => resolve(null);
+        };
+        request.onerror = () => resolve(null);
+    });
+}
+
 function handleAudioFile(file) {
-    const validExtensions = ['.opus', '.ogg'];
-    const hasValidExt = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
-    if (!file.type.includes('audio/') && !hasValidExt) {
-        alert('Por favor, selecione um arquivo OPUS ou OGG válido.');
+    if (!file.type.includes('audio/') && !file.name.match(/\.(opus|ogg|mp3|wav|m4a|aac|flac|wma|amr|3gp)$/i)) {
+        alert('Por favor, selecione um arquivo de áudio válido.');
         return;
     }
     audioBlob = file;

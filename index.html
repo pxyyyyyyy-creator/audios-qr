@@ -9,12 +9,17 @@
     <meta name="theme-color" content="#000000">
 </head>
 <body>
+    <div class="install-banner" id="installSection" style="display: none;">
+        <div class="install-banner-text">
+            <span class="install-banner-title">Aplicativo Áudio QR</span>
+            <span class="install-banner-desc">Instale para compartilhar arquivos direto do WhatsApp para cá.</span>
+        </div>
+        <button id="installBtn" class="install-banner-btn">Instalar</button>
+    </div>
+    
     <div class="container">
         <header id="mainHeader">
             <h1>Áudio QR</h1>
-            <div class="install-section" id="installSection" style="display: none;">
-                <button id="installBtn" class="btn btn-secondary">Adicionar à Tela Inicial</button>
-            </div>
         </header>
 
         <main>
@@ -27,7 +32,7 @@
                 <div class="input-group">
                     <label for="audioInput">Arquivo de Áudio</label>
                     <div class="file-drop" id="fileDrop">
-                        <input type="file" id="audioInput" accept="audio/ogg,audio/opus,.opus,.ogg" hidden>
+                        <input type="file" id="audioInput" accept="audio/*,.opus,.ogg,.mp3,.m4a,.aac,.wav,.wma,.flac,.amr,.3gp" hidden>
                         <div class="file-drop-content">
                             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -35,7 +40,7 @@
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
                             <p class="drop-text">Clique ou arraste um arquivo de áudio</p>
-                            <p class="drop-hint">Formatos aceitos: OPUS, OGG</p>
+                            <p class="drop-hint">Formatos aceitos: Áudios do WhatsApp, OPUS, OGG, MP3...</p>
                         </div>
                     </div>
                     <div id="fileName" class="file-name"></div>
@@ -133,6 +138,6 @@
         </footer>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>

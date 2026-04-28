@@ -955,16 +955,65 @@ audio::-webkit-media-controls-mute-button {
     font-weight: 500;
 }
 
-.install-section {
-    text-align: center;
-    margin: 30px 0;
+.install-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1a1a2e;
+    color: #ffffff;
+    z-index: 1000;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+    animation: slideDown 0.4s ease-out;
 }
 
-.install-section .btn {
-    width: 100%;
-    max-width: 340px;
-    font-size: 0.9rem;
-    padding: 14px 28px;
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.install-banner-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-right: 15px;
+}
+
+.install-banner-title {
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-bottom: 3px;
+}
+
+.install-banner-desc {
+    font-size: 0.8rem;
+    opacity: 0.85;
+    line-height: 1.3;
+}
+
+.install-banner-btn {
+    background-color: #e91e63;
+    color: #ffffff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    letter-spacing: 0.5px;
+}
+
+.install-banner-btn:active {
+    transform: scale(0.95);
+    background-color: #c2185b;
 }
 
 .developer {

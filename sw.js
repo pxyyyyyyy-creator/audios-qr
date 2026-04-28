@@ -1,36 +1,53 @@
-const CACHE_NAME = 'audio-qr-v1';
+const CACHE_NAME = 'audio-qr-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
-    './style.css',
-    './script.js',
-    './manifest.json'
+    './style.css?v=6',
+    './script.js?v=5',
+    './manifest.json',
+    './qrcode.min.js'
 ];
 
 self.addEventListener('install', event => {
+    self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS_TO_CACHE))
     );
 });
 
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(keys => {
+            return Promise.all(
+                keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+            );
+        }).then(() => self.clients.claim())
+    );
+});
+
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
-    
-    // Skip caching for favicon and other non-essential requests
+
     if (url.pathname.endsWith('/favicon.ico')) {
         event.respondWith(fetch(event.request).catch(() => new Response('', {status: 404})));
         return;
     }
-    
+
     if (event.request.method === 'POST' && url.pathname.endsWith('index.html')) {
         event.respondWith(handleShareTarget(event));
         return;
     }
-    
+
+    if (event.request.method === 'POST') {
+        return;
+    }
+
     event.respondWith(
-        caches.match(event.request).then(response => {
-            return response || fetch(event.request).catch(() => {
-                return new Response('Network error', {status: 503});
+        fetch(event.request).then(response => {
+            return response;
+        }).catch(() => {
+            return caches.match(event.request).then(cached => {
+                return cached || new Response('Sem conexão', {status: 503});
             });
         })
     );
@@ -40,28 +57,28 @@ async function handleShareTarget(event) {
     try {
         const formData = await event.request.formData();
         const audioFile = formData.get('audio');
-        
-        if (audioFile && audioFile.type.includes('audio/')) {
+
+        if (audioFile && audioFile.size > 0) {
             await storeSharedFile(audioFile);
             return Response.redirect('./index.html?shared=1', 303);
         }
     } catch (err) {
-        console.error('Error handling share:', err);
+        console.error('Erro ao receber compartilhamento:', err);
     }
-    return fetch(event.request);
+    return Response.redirect('./index.html', 303);
 }
 
 function storeSharedFile(file) {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open('AudioQRDB', 1);
-        
+
         request.onupgradeneeded = () => {
             const db = request.result;
             if (!db.objectStoreNames.contains('sharedFiles')) {
                 db.createObjectStore('sharedFiles', { keyPath: 'id' });
             }
         };
-        
+
         request.onsuccess = () => {
             const db = request.result;
             const transaction = db.transaction('sharedFiles', 'readwrite');
@@ -70,7 +87,7 @@ function storeSharedFile(file) {
             transaction.oncomplete = resolve;
             transaction.onerror = reject;
         };
-        
+
         request.onerror = reject;
     });
 }
