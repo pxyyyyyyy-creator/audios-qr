@@ -126,15 +126,33 @@ function initApp() {
             const viewerLink = `${baseUrl}?play=${encodeURIComponent(uploadedGitHubUrl)}&name=${encodeURIComponent(currentAudioName)}`;
 
             const qrImg = new Image();
+            // Permite carregar a imagem da API contornando problemas de CORS no download
+            qrImg.crossOrigin = 'Anonymous';
             qrImg.onload = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = 256;
-                canvas.height = 256;
+                canvas.height = 310;
                 const ctx = canvas.getContext('2d');
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
                 ctx.drawImage(qrImg, 0, 0, 256, 256);
+                
                 ctx.strokeStyle = '#000000';
                 ctx.lineWidth = 2;
-                ctx.strokeRect(0, 0, 256, 256);
+                ctx.strokeRect(1, 1, 254, 308);
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'center';
+                
+                let displayNameText = currentAudioName;
+                if (displayNameText.length > 20) {
+                    displayNameText = displayNameText.substring(0, 18) + '...';
+                }
+                ctx.fillText(displayNameText, 128, 290);
+                
                 document.getElementById('qrcode').innerHTML = '';
                 document.getElementById('qrcode').appendChild(canvas);
                 
