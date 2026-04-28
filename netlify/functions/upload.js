@@ -11,7 +11,7 @@ exports.handler = async (event, context) => {
 
         // Lemos essas variáveis que você vai configurar como "Environment Variables" no painel do Netlify
         const githubToken = process.env.GITHUB_TOKEN;
-        const owner = process.env.GITHUB_OWNER || 'Pinho47';
+        const owner = process.env.GITHUB_OWNER || 'pxyyyyyyy-creator';
         const repo = process.env.GITHUB_REPO || 'audios-qr';
         const branch = process.env.GITHUB_BRANCH || 'master';
         const path = `uploads/${filename}`;
