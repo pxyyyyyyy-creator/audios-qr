@@ -22,16 +22,21 @@
             "purpose": "any maskable"
         }
     ],
+    "scope": "/",
     "share_target": {
-        "action": "./index.html",
+        "action": "/index.html",
         "method": "POST",
         "enctype": "multipart/form-data",
         "params": {
+            "title": "title",
+            "text": "text",
+            "url": "url",
             "files": [
                 {
                     "name": "audio",
                     "accept": [
                         "audio/*",
+                        "video/*",
                         ".opus", ".ogg", ".mp3", ".m4a", ".aac",
                         ".wav", ".wma", ".flac", ".amr", ".3gp"
                     ]
