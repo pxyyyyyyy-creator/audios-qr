@@ -14,7 +14,7 @@ let currentPlayhead = -1;
 let animationId = null;
 
 let audioInput, fileDrop, fileName, audioName, generateBtn, resultSection,
-    audioPlayer, displayName, downloadBtn, shareBtn, installSection, installBtn,
+    audioPlayer, displayName, downloadBtn, shareBtn, shareQrBtn, installSection, installBtn,
     cropSection, waveformCanvas, startSlider, endSlider, startTimeInput,
     endTimeInput, durationDisplay, previewBtn, resetCropBtn,
     mainHeader, uploadSection, viewerSection, viewerName, viewerAudio,
@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     displayName = document.getElementById('displayName');
     downloadBtn = document.getElementById('downloadBtn');
     shareBtn = document.getElementById('shareBtn');
+    shareQrBtn = document.getElementById('shareQrBtn');
     installSection = document.getElementById('installSection');
     installBtn = document.getElementById('installBtn');
     cropSection = document.getElementById('cropSection');
@@ -253,18 +254,7 @@ function initApp() {
     });
 
     downloadBtn.addEventListener('click', () => {
-        const qrDiv = document.getElementById('qrcode');
-        const canvas = qrDiv.querySelector('canvas');
-        if (!canvas) {
-            alert('Gere o QR Code primeiro.');
-            return;
-        }
-        const link = document.createElement('a');
-        link.download = `${currentAudioName}_qrcode.png`;
-        link.href = canvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        downloadQrImage();
     });
 
     shareBtn.addEventListener('click', async () => {
@@ -285,6 +275,36 @@ function initApp() {
         } else {
             copyToClipboard(currentShareLink);
             alert('Link do visualizador copiado para a área de transferência!');
+        }
+    });
+
+    shareQrBtn.addEventListener('click', async () => {
+        const qrDiv = document.getElementById('qrcode');
+        const canvas = qrDiv.querySelector('canvas');
+        if (!canvas) {
+            alert('Gere o QR Code primeiro.');
+            return;
+        }
+
+        if (navigator.share) {
+            try {
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                const file = new File([blob], `${currentAudioName}_qrcode.png`, { type: 'image/png' });
+                
+                await navigator.share({
+                    title: currentAudioName,
+                    text: `QR Code - ${currentAudioName}`,
+                    files: [file]
+                });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.error('Erro ao compartilhar QR Code:', err);
+                    downloadQrImage();
+                }
+            }
+        } else {
+            downloadQrImage();
+            alert('QR Code baixado! Compartilhe a imagem manualmente.');
         }
     });
 
@@ -780,6 +800,19 @@ function getAudioBlobForShare() {
         croppedBlob = null;
         return audioBlob;
     }
+}
+
+function downloadQrImage() {
+    const qrDiv = document.getElementById('qrcode');
+    const canvas = qrDiv.querySelector('canvas');
+    if (!canvas) return;
+    
+    const link = document.createElement('a');
+    link.download = `${currentAudioName}_qrcode.png`;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function copyToClipboard(text) {
