@@ -1,13 +1,13 @@
-const CACHE_NAME = 'audio-qr-v5';
+const CACHE_NAME = 'audio-qr-v6';
 const ASSETS_TO_CACHE = [
-    './',
-    './index.html',
-    './style.css?v=8',
-    './script.js?v=8',
-    './manifest.json',
-    './qrcode.min.js',
-    './icon-192.png',
-    './icon-512.png'
+    '/',
+    '/index.html',
+    '/style.css',
+    '/script.js',
+    '/manifest.json',
+    '/qrcode.min.js',
+    '/icon-192.png',
+    '/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -30,26 +30,28 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
 
-    if (url.pathname.endsWith('/favicon.ico')) {
-        event.respondWith(fetch(event.request).catch(() => new Response('', {status: 404})));
+    // Ignorar favicon
+    if (url.pathname === '/favicon.ico') {
+        event.respondWith(new Response('', { status: 204 }));
         return;
     }
 
-    if (event.request.method === 'POST' && url.pathname.endsWith('index.html')) {
+    // SHARE TARGET - intercepta POST em /share-target
+    if (event.request.method === 'POST' && url.pathname === '/share-target') {
         event.respondWith(handleShareTarget(event));
         return;
     }
 
-    if (event.request.method === 'POST') {
+    // Ignorar outros POSTs (API calls etc)
+    if (event.request.method !== 'GET') {
         return;
     }
 
+    // Network-first para GET
     event.respondWith(
-        fetch(event.request).then(response => {
-            return response;
-        }).catch(() => {
+        fetch(event.request).catch(() => {
             return caches.match(event.request).then(cached => {
-                return cached || new Response('Sem conexão', {status: 503});
+                return cached || new Response('Sem conexão', { status: 503 });
             });
         })
     );
@@ -62,12 +64,12 @@ async function handleShareTarget(event) {
 
         if (audioFile && audioFile.size > 0) {
             await storeSharedFile(audioFile);
-            return Response.redirect('./index.html?shared=1', 303);
+            return Response.redirect('/?shared=1', 303);
         }
     } catch (err) {
-        console.error('Erro ao receber compartilhamento:', err);
+        console.error('Share target error:', err);
     }
-    return Response.redirect('./index.html', 303);
+    return Response.redirect('/', 303);
 }
 
 function storeSharedFile(file) {

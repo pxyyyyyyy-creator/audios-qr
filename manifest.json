@@ -2,29 +2,41 @@
     "name": "Áudio QR - ASBREMFO",
     "short_name": "ÁudioQR",
     "description": "Compartilhe áudios de alunos via QR Code",
-    "start_url": "./index.html",
+    "start_url": "/",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#000000",
+    "theme_color": "#e91e63",
     "orientation": "any",
     "categories": ["education", "utilities"],
     "icons": [
         {
-            "src": "./icon-192.png",
+            "src": "/icon-192.png",
             "sizes": "192x192",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
         },
         {
-            "src": "./icon-512.png",
+            "src": "/icon-512.png",
             "sizes": "512x512",
             "type": "image/png",
-            "purpose": "any maskable"
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ],
-    "scope": "/",
     "share_target": {
-        "action": "/index.html",
+        "action": "/share-target",
         "method": "POST",
         "enctype": "multipart/form-data",
         "params": {
@@ -37,25 +49,12 @@
                     "accept": [
                         "audio/*",
                         "video/*",
+                        "application/octet-stream",
                         ".opus", ".ogg", ".mp3", ".m4a", ".aac",
                         ".wav", ".wma", ".flac", ".amr", ".3gp"
                     ]
                 }
             ]
         }
-    },
-    "file_handlers": [
-        {
-            "action": "./index.html",
-            "accept": {
-                "audio/ogg": [".opus", ".ogg"],
-                "audio/opus": [".opus"],
-                "audio/mpeg": [".mp3"],
-                "audio/mp4": [".m4a"],
-                "audio/aac": [".aac"],
-                "audio/wav": [".wav"],
-                "audio/amr": [".amr"]
-            }
-        }
-    ]
+    }
 }
