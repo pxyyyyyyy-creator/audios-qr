@@ -173,7 +173,18 @@ function initApp() {
         }
         const blobToShare = getAudioBlobForShare();
         
-        const fileNameToUpload = `${currentAudioName.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}${blobToShare.type.includes('wav') ? '.wav' : '.opus'}`;
+        const getExtension = (blob) => {
+            const type = blob.type;
+            if (type.includes('wav')) return '.wav';
+            if (type.includes('mp4') || type.includes('mp4')) return '.mp4';
+            if (type.includes('ogg')) return '.ogg';
+            if (type.includes('mpeg') || type.includes('mp3')) return '.mp3';
+            if (type.includes('aac') || type.includes('m4a')) return '.m4a';
+            if (type.includes('flac')) return '.flac';
+            return '.opus';
+        };
+        
+        const fileNameToUpload = `${currentAudioName.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}${getExtension(blobToShare)}`;
         
         try {
             const uploadedGitHubUrl = await uploadToGitHub(blobToShare, fileNameToUpload);
@@ -418,8 +429,8 @@ function loadSharedFileFromDB() {
 }
 
 function handleAudioFile(file) {
-    if (!file.type.includes('audio/') && !file.name.match(/\.(opus|ogg|mp3|wav|m4a|aac|flac|wma|amr|3gp)$/i)) {
-        alert('Por favor, selecione um arquivo de áudio válido.');
+    if (!file.type.includes('audio/') && !file.type.includes('video/') && !file.name.match(/\.(opus|ogg|mp3|wav|m4a|aac|flac|wma|amr|3gp|mp4|mov|avi|mkv)$/i)) {
+        alert('Por favor, selecione um arquivo de áudio ou vídeo válido.');
         return;
     }
     audioBlob = file;
