@@ -371,6 +371,7 @@ function checkViewerMode() {
         mainHeader.style.display = 'none';
         uploadSection.style.display = 'none';
         resultSection.style.display = 'none';
+        if (installSection) installSection.style.display = 'none';
         
         viewerName.textContent = nameStr;
         viewerAudio.src = playUrl;

@@ -1296,7 +1296,9 @@ footer {
 .viewer-mode header,
 .viewer-mode footer,
 .viewer-mode .upload-section,
-.viewer-mode .result-section {
+.viewer-mode .result-section,
+.viewer-mode .install-banner,
+.viewer-mode ~ .install-banner {
     display: none !important;
 }
 
