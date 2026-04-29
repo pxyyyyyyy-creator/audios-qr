@@ -1,11 +1,13 @@
-const CACHE_NAME = 'audio-qr-v2';
+const CACHE_NAME = 'audio-qr-v4';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
-    './style.css?v=6',
-    './script.js?v=5',
+    './style.css?v=8',
+    './script.js?v=8',
     './manifest.json',
-    './qrcode.min.js'
+    './qrcode.min.js',
+    './icon-192.png',
+    './icon-512.png'
 ];
 
 self.addEventListener('install', event => {

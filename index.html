@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Áudio QR</title>
-    <link rel="stylesheet" href="style.css?v=6">
+    <link rel="stylesheet" href="style.css?v=8">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#000000">
 </head>
+
 <body>
     <div class="install-banner" id="installSection" style="display: none;">
         <div class="install-banner-text">
@@ -16,7 +18,7 @@
         </div>
         <button id="installBtn" class="install-banner-btn">Instalar</button>
     </div>
-    
+
     <div class="container">
         <header id="mainHeader">
             <h1>Áudio QR</h1>
@@ -32,9 +34,11 @@
                 <div class="input-group">
                     <label for="audioInput">Arquivo de Áudio</label>
                     <div class="file-drop" id="fileDrop">
-                        <input type="file" id="audioInput" accept="audio/*,.opus,.ogg,.mp3,.m4a,.aac,.wav,.wma,.flac,.amr,.3gp" hidden>
+                        <input type="file" id="audioInput"
+                            accept="audio/*,.opus,.ogg,.mp3,.m4a,.aac,.wav,.wma,.flac,.amr,.3gp" hidden>
                         <div class="file-drop-content">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -94,15 +98,15 @@
             </div>
 
             <div id="viewerSection" class="viewer-section-wrap">
-                
+
                 <div class="viewer-card">
                     <div class="viewer-flowers-row">🌸 🌷 🌺 🌹 🌻</div>
-                    
+
                     <p class="school-name">ASBREMFO-SEDE</p>
                     <div class="viewer-divider"></div>
                     <h1 class="mothers-day-title">Dia das Mães</h1>
                     <p class="viewer-subtitle">Uma homenagem especial para você</p>
-                    
+
                     <div class="viewer-name-badge">
                         <span class="viewer-name-label">Aluno(a)</span>
                         <h2 id="viewerName"></h2>
@@ -110,8 +114,13 @@
 
                     <div class="mini-player">
                         <button id="playPauseBtn" class="mini-play-btn">
-                            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M8 5v14l11-7z"/></svg>
-                            <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"
+                                style="display:none;">
+                                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                            </svg>
                         </button>
                         <div class="mini-progress-area">
                             <div class="mini-progress-bar">
@@ -134,10 +143,12 @@
 
         <footer>
             <p id="devMessage" class="developer">desenvolvido por Emmanuel</p>
-            <button id="admBtn" class="btn-link" style="margin-top: 15px; font-size: 0.8rem; opacity: 0.5;">Painel Adm</button>
+            <button id="admBtn" class="btn-link" style="margin-top: 15px; font-size: 0.8rem; opacity: 0.5;">Painel
+                Adm</button>
         </footer>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=8"></script>
 </body>
+
 </html>
