@@ -52,31 +52,47 @@
 
                 <div class="crop-section" id="cropSection" style="display: none;">
                     <div class="input-group">
-                        <label>Visualizar e Recortar</label>
-                        <div class="waveform-container">
-                            <canvas id="waveformCanvas" width="600" height="120"></canvas>
-                            <div class="waveform-overlay" id="waveformOverlay"></div>
+                        <label>✂️ Recortar Áudio</label>
+                        
+                        <div class="crop-waveform-wrap" id="cropWaveformWrap">
+                            <canvas id="waveformCanvas" width="600" height="100"></canvas>
+                            <div class="crop-handle crop-handle-start" id="handleStart"></div>
+                            <div class="crop-handle crop-handle-end" id="handleEnd"></div>
+                            <div class="crop-region" id="cropRegion"></div>
                         </div>
-                        <div class="time-controls">
-                            <div class="time-input">
-                                <label for="startTime">Início (s):</label>
-                                <input type="number" id="startTime" min="0" value="0" step="0.1">
+
+                        <div class="crop-time-row">
+                            <div class="crop-time-block">
+                                <span class="crop-time-label">Início</span>
+                                <div class="crop-time-adj">
+                                    <button class="crop-adj-btn" id="startMinus" type="button">−</button>
+                                    <span class="crop-time-val" id="startTimeDisplay">0.0s</span>
+                                    <button class="crop-adj-btn" id="startPlus" type="button">+</button>
+                                </div>
                             </div>
-                            <div class="time-input">
-                                <label for="endTime">Fim (s):</label>
-                                <input type="number" id="endTime" min="0" step="0.1">
+                            <div class="crop-duration-pill">
+                                <span id="durationDisplay">0</span>s
                             </div>
-                            <span class="duration-display">Duração: <span id="durationDisplay">0</span>s</span>
+                            <div class="crop-time-block">
+                                <span class="crop-time-label">Fim</span>
+                                <div class="crop-time-adj">
+                                    <button class="crop-adj-btn" id="endMinus" type="button">−</button>
+                                    <span class="crop-time-val" id="endTimeDisplay">0.0s</span>
+                                    <button class="crop-adj-btn" id="endPlus" type="button">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="range-sliders">
-                            <input type="range" id="startSlider" min="0" max="100" value="0" class="slider">
-                            <input type="range" id="endSlider" min="0" max="100" value="100" class="slider">
-                        </div>
+                        
                         <div class="crop-actions">
-                            <button id="previewBtn" class="btn btn-secondary" style="flex: 1;">Ouvir Seleção</button>
-                            <button id="resetCropBtn" class="btn btn-secondary" style="flex: 1;">Redefinir</button>
+                            <button id="previewBtn" class="btn btn-secondary" style="flex: 1;">▶ Ouvir Seleção</button>
+                            <button id="resetCropBtn" class="btn btn-secondary" style="flex: 1;">↺ Redefinir</button>
                         </div>
                     </div>
+                    <!-- Hidden inputs for backward compat -->
+                    <input type="hidden" id="startTime" value="0">
+                    <input type="hidden" id="endTime" value="0">
+                    <input type="hidden" id="startSlider" value="0">
+                    <input type="hidden" id="endSlider" value="100">
                 </div>
 
                 <button id="generateBtn" class="btn btn-primary">Gerar QR Code</button>

@@ -120,6 +120,28 @@ function initApp() {
     startTimeInput.addEventListener('change', updateCropFromInputs);
     endTimeInput.addEventListener('change', updateCropFromInputs);
 
+    // ===== DRAG HANDLES =====
+    setupCropHandles();
+
+    // ===== +/- BUTTONS =====
+    const stepSize = 0.5;
+    document.getElementById('startMinus').addEventListener('click', () => {
+        cropStart = Math.max(0, cropStart - stepSize);
+        syncCropUI();
+    });
+    document.getElementById('startPlus').addEventListener('click', () => {
+        cropStart = Math.min(cropEnd - 0.1, cropStart + stepSize);
+        syncCropUI();
+    });
+    document.getElementById('endMinus').addEventListener('click', () => {
+        cropEnd = Math.max(cropStart + 0.1, cropEnd - stepSize);
+        syncCropUI();
+    });
+    document.getElementById('endPlus').addEventListener('click', () => {
+        cropEnd = Math.min(audioDuration, cropEnd + stepSize);
+        syncCropUI();
+    });
+
     previewBtn.addEventListener('click', () => {
         if (!audioBuffer || cropStart >= cropEnd) return;
         const cropped = cropAudioBuffer(audioBuffer, cropStart, cropEnd);
@@ -129,11 +151,7 @@ function initApp() {
     resetCropBtn.addEventListener('click', () => {
         cropStart = 0;
         cropEnd = audioDuration;
-        startSlider.value = 0;
-        endSlider.value = 100;
-        startTimeInput.value = 0;
-        endTimeInput.value = audioDuration.toFixed(1);
-        renderWaveform();
+        syncCropUI();
     });
 
     generateBtn.addEventListener('click', async () => {
@@ -425,13 +443,9 @@ async function decodeAudio(file) {
     try {
         audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         audioDuration = audioBuffer.duration;
-        durationDisplay.textContent = audioDuration.toFixed(1);
-        endTimeInput.value = audioDuration.toFixed(1);
-        endSlider.value = 100;
-        startSlider.value = 0;
-        startTimeInput.value = 0;
+        cropStart = 0;
         cropEnd = audioDuration;
-        renderWaveform();
+        syncCropUI();
     } catch (err) {
         alert('Erro ao decodificar arquivo de áudio. Tente outro arquivo.');
     }
@@ -484,6 +498,117 @@ function renderWaveform() {
         ctx.fillStyle = '#ff0000';
         ctx.fillRect(playheadX, 0, 2, height);
     }
+}
+
+function syncCropUI() {
+    // Atualizar displays de tempo
+    const startDisplay = document.getElementById('startTimeDisplay');
+    const endDisplay = document.getElementById('endTimeDisplay');
+    if (startDisplay) startDisplay.textContent = cropStart.toFixed(1) + 's';
+    if (endDisplay) endDisplay.textContent = cropEnd.toFixed(1) + 's';
+    
+    // Atualizar hidden inputs e sliders (backward compat)
+    if (startTimeInput) startTimeInput.value = cropStart.toFixed(1);
+    if (endTimeInput) endTimeInput.value = cropEnd.toFixed(1);
+    if (startSlider) startSlider.value = audioDuration ? (cropStart / audioDuration) * 100 : 0;
+    if (endSlider) endSlider.value = audioDuration ? (cropEnd / audioDuration) * 100 : 100;
+    
+    // Atualizar duração
+    const dur = Math.max(0, cropEnd - cropStart);
+    durationDisplay.textContent = dur.toFixed(1);
+    
+    // Atualizar handles visuais
+    updateCropHandlePositions();
+    
+    // Redesenhar waveform
+    renderWaveform();
+}
+
+function updateCropHandlePositions() {
+    const wrap = document.getElementById('cropWaveformWrap');
+    const handleStart = document.getElementById('handleStart');
+    const handleEnd = document.getElementById('handleEnd');
+    const region = document.getElementById('cropRegion');
+    if (!wrap || !handleStart || !handleEnd || !region || !audioDuration) return;
+    
+    const w = wrap.offsetWidth;
+    const startPx = (cropStart / audioDuration) * w;
+    const endPx = (cropEnd / audioDuration) * w;
+    
+    handleStart.style.left = startPx + 'px';
+    handleStart.style.transform = 'translateX(-50%)';
+    handleEnd.style.left = endPx + 'px';
+    handleEnd.style.right = 'auto';
+    handleEnd.style.transform = 'translateX(-50%)';
+    
+    region.style.left = startPx + 'px';
+    region.style.width = (endPx - startPx) + 'px';
+}
+
+function setupCropHandles() {
+    const wrap = document.getElementById('cropWaveformWrap');
+    const handleStart = document.getElementById('handleStart');
+    const handleEnd = document.getElementById('handleEnd');
+    if (!wrap || !handleStart || !handleEnd) return;
+    
+    let dragging = null; // 'start' or 'end'
+    
+    function getTimeFromX(clientX) {
+        const rect = wrap.getBoundingClientRect();
+        const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+        return (x / rect.width) * audioDuration;
+    }
+    
+    function onPointerDown(which, e) {
+        e.preventDefault();
+        dragging = which;
+        document.body.style.userSelect = 'none';
+    }
+    
+    function onPointerMove(e) {
+        if (!dragging || !audioDuration) return;
+        e.preventDefault();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const time = getTimeFromX(clientX);
+        
+        if (dragging === 'start') {
+            cropStart = Math.max(0, Math.min(time, cropEnd - 0.1));
+        } else {
+            cropEnd = Math.min(audioDuration, Math.max(time, cropStart + 0.1));
+        }
+        syncCropUI();
+    }
+    
+    function onPointerUp() {
+        dragging = null;
+        document.body.style.userSelect = '';
+    }
+    
+    // Mouse
+    handleStart.addEventListener('mousedown', (e) => onPointerDown('start', e));
+    handleEnd.addEventListener('mousedown', (e) => onPointerDown('end', e));
+    document.addEventListener('mousemove', onPointerMove);
+    document.addEventListener('mouseup', onPointerUp);
+    
+    // Touch
+    handleStart.addEventListener('touchstart', (e) => onPointerDown('start', e), { passive: false });
+    handleEnd.addEventListener('touchstart', (e) => onPointerDown('end', e), { passive: false });
+    document.addEventListener('touchmove', onPointerMove, { passive: false });
+    document.addEventListener('touchend', onPointerUp);
+    
+    // Tap no waveform para mover o handle mais próximo
+    wrap.addEventListener('click', (e) => {
+        if (!audioDuration) return;
+        const time = getTimeFromX(e.clientX);
+        const distToStart = Math.abs(time - cropStart);
+        const distToEnd = Math.abs(time - cropEnd);
+        if (distToStart < distToEnd) {
+            cropStart = Math.max(0, Math.min(time, cropEnd - 0.1));
+        } else {
+            cropEnd = Math.min(audioDuration, Math.max(time, cropStart + 0.1));
+        }
+        syncCropUI();
+    });
 }
 
 function updateCropFromSliders() {
