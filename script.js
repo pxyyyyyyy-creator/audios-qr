@@ -330,7 +330,7 @@ function initApp() {
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installSection.style.display = 'flex';
+        if (installBtn) installBtn.style.display = 'inline-flex';
     });
 
     installBtn.addEventListener('click', async () => {
@@ -338,13 +338,13 @@ function initApp() {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') {
-            installSection.style.display = 'none';
+            if (installBtn) installBtn.style.display = 'none';
         }
         deferredPrompt = null;
     });
 
     window.addEventListener('appinstalled', () => {
-        installSection.style.display = 'none';
+        if (installBtn) installBtn.style.display = 'none';
         deferredPrompt = null;
     });
 
@@ -421,7 +421,7 @@ function checkViewerMode() {
         mainHeader.style.display = 'none';
         uploadSection.style.display = 'none';
         resultSection.style.display = 'none';
-        if (installSection) installSection.style.display = 'none';
+        if (installBtn) installBtn.style.display = 'none';
         
         viewerName.textContent = nameStr;
         viewerAudio.src = playUrl;
@@ -537,7 +537,10 @@ function loadSharedFileFromDB() {
 }
 
 function handleAudioFile(file) {
-    if (!file.type.includes('audio/') && !file.type.includes('video/') && !file.name.match(/\.(opus|ogg|mp3|wav|m4a|aac|flac|wma|amr|3gp|mp4|mov|avi|mkv)$/i)) {
+    const isAudioType = file.type.includes('audio/') || file.type.includes('video/') || file.type.includes('application/octet-stream') || !file.type;
+    const isAudioName = file.name.match(/\.(opus|ogg|mp3|wav|m4a|aac|flac|wma|amr|3gp|mp4|mov|avi|mkv|enc)$/i) || !file.name.includes('.');
+    
+    if (!isAudioType && !isAudioName) {
         alert('Por favor, selecione um arquivo de áudio ou vídeo válido.');
         return;
     }
