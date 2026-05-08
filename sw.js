@@ -61,7 +61,15 @@ async function handleShareTarget(event) {
     try {
         const formData = await event.request.formData();
         const audioFile = formData.get('audio');
+        const imageFile = formData.get('image');
 
+        // Imagem compartilhada → vai para aba de impressão
+        if (imageFile && imageFile.size > 0 && imageFile.type.startsWith('image/')) {
+            await storeSharedImage(imageFile);
+            return Response.redirect('/?shared-image=1', 303);
+        }
+
+        // Áudio compartilhado → fluxo normal
         if (audioFile && audioFile.size > 0) {
             await storeSharedFile(audioFile);
             return Response.redirect('/?shared=1', 303);
@@ -72,14 +80,47 @@ async function handleShareTarget(event) {
     return Response.redirect('/', 303);
 }
 
-function storeSharedFile(file) {
+function storeSharedImage(file) {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('AudioQRDB', 1);
+        const request = indexedDB.open('AudioQRDB', 2);
 
         request.onupgradeneeded = () => {
             const db = request.result;
             if (!db.objectStoreNames.contains('sharedFiles')) {
                 db.createObjectStore('sharedFiles', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('sharedImages')) {
+                db.createObjectStore('sharedImages', { autoIncrement: true });
+            }
+        };
+
+        request.onsuccess = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains('sharedImages')) {
+                resolve(); return;
+            }
+            const transaction = db.transaction('sharedImages', 'readwrite');
+            const store = transaction.objectStore('sharedImages');
+            store.add({ file, name: file.name, timestamp: Date.now() });
+            transaction.oncomplete = resolve;
+            transaction.onerror = reject;
+        };
+
+        request.onerror = reject;
+    });
+}
+
+function storeSharedFile(file) {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('AudioQRDB', 2);
+
+        request.onupgradeneeded = (e) => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains('sharedFiles')) {
+                db.createObjectStore('sharedFiles', { keyPath: 'id' });
+            }
+            if (!db.objectStoreNames.contains('sharedImages')) {
+                db.createObjectStore('sharedImages', { autoIncrement: true });
             }
         };
 

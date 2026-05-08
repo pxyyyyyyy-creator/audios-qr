@@ -13,6 +13,11 @@ let previewSource = null;
 let currentPlayhead = -1;
 let animationId = null;
 
+// QR Codes criados para impressão
+let createdQRCodes = [];
+let selectedQRs = [];
+let layoutPerPage = 9; // Padrão: 9 moldes por página
+
 let audioInput, fileDrop, fileName, audioName, generateBtn, resultSection,
     audioPlayer, displayName, downloadBtn, shareBtn, shareQrBtn, installSection, installBtn,
     cropSection, waveformCanvas, startSlider, endSlider, startTimeInput,
@@ -229,6 +234,20 @@ function initApp() {
                 document.getElementById('qrcode').innerHTML = '';
                 document.getElementById('qrcode').appendChild(canvas);
                 
+                // Salvar QR code para a aba de impressão
+                const canvasCopy = document.createElement('canvas');
+                canvasCopy.width = canvas.width;
+                canvasCopy.height = canvas.height;
+                const ctxCopy = canvasCopy.getContext('2d');
+                ctxCopy.drawImage(canvas, 0, 0);
+                
+                createdQRCodes.push({
+                    canvas: canvasCopy,
+                    name: currentAudioName,
+                    link: currentShareLink,
+                    timestamp: Date.now()
+                });
+                
                 generateBtn.disabled = false;
                 generateBtn.textContent = 'Gerar QR Code';
             };
@@ -413,6 +432,30 @@ function checkViewerMode() {
 
 async function checkSharedFile() {
     const urlParams = new URLSearchParams(window.location.search);
+    
+    // Imagem compartilhada → vai para aba de impressão
+    if (urlParams.get('shared-image') === '1') {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        const images = await loadSharedImagesFromDB();
+        if (images && images.length > 0) {
+            // Ativar aba de impressão
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-tab="print"]').classList.add('active');
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('printContainer').style.display = 'block';
+            
+            // Adicionar cada imagem no próximo slot disponível
+            for (const imgData of images) {
+                await addSharedImageToSlot(imgData);
+            }
+            renderQRList();
+            renderA4Preview();
+        }
+        return;
+    }
+    
+    // Áudio compartilhado → fluxo normal
     if (urlParams.get('shared') === '1') {
         const file = await loadSharedFileFromDB();
         if (file) {
@@ -422,9 +465,54 @@ async function checkSharedFile() {
     }
 }
 
+function loadSharedImagesFromDB() {
+    return new Promise((resolve) => {
+        const request = indexedDB.open('AudioQRDB', 2);
+        request.onsuccess = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains('sharedImages')) return resolve([]);
+            const tx = db.transaction('sharedImages', 'readwrite');
+            const store = tx.objectStore('sharedImages');
+            const all = store.getAll();
+            all.onsuccess = () => {
+                // Limpar após ler
+                store.clear();
+                resolve(all.result || []);
+            };
+            all.onerror = () => resolve([]);
+        };
+        request.onerror = () => resolve([]);
+    });
+}
+
+function addSharedImageToSlot(imgData) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                selectedQRs.push({
+                    canvas,
+                    name: '',
+                    link: '',
+                    timestamp: Date.now(),
+                    uploaded: true
+                });
+                resolve();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(imgData.file);
+    });
+}
+
 function loadSharedFileFromDB() {
     return new Promise((resolve) => {
-        const request = indexedDB.open('AudioQRDB', 1);
+        const request = indexedDB.open('AudioQRDB', 2);
         request.onsuccess = () => {
             const db = request.result;
             if (!db.objectStoreNames.contains('sharedFiles')) {
@@ -854,4 +942,397 @@ async function uploadToGitHub(blob, filename) {
     
     const data = await response.json();
     return data.url;
+}
+
+
+// ===== PRINT TAB FUNCTIONALITY =====
+
+// Inicializar sistema de abas
+document.addEventListener('DOMContentLoaded', () => {
+    initTabs();
+    initPrintTab();
+});
+
+function initTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const container = document.querySelector('.container');
+    const printContainer = document.getElementById('printContainer');
+    const tabsNav = document.getElementById('tabsNav');
+    
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            
+            // Atualizar botões
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Mostrar/esconder containers
+            if (tab === 'create') {
+                container.style.display = 'flex';
+                printContainer.style.display = 'none';
+            } else if (tab === 'print') {
+                container.style.display = 'none';
+                printContainer.style.display = 'block';
+                renderQRList();
+                renderA4Preview();
+            }
+        });
+    });
+    
+    // Esconder tabs em modo viewer
+    if (window.location.search.includes('play=')) {
+        tabsNav.style.display = 'none';
+    }
+}
+
+function initPrintTab() {
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+    const generatePdfBtn = document.getElementById('generatePdfBtn');
+    const layoutSelect = document.getElementById('layoutSelect');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', () => {
+            selectedQRs = [...createdQRCodes];
+            renderQRList();
+            renderA4Preview();
+        });
+    }
+    
+    if (clearSelectionBtn) {
+        clearSelectionBtn.addEventListener('click', () => {
+            selectedQRs = [];
+            renderQRList();
+            renderA4Preview();
+        });
+    }
+    
+    if (generatePdfBtn) {
+        generatePdfBtn.addEventListener('click', generatePDF);
+    }
+    
+    const importImagesBtn = document.getElementById('importImagesBtn');
+    if (importImagesBtn) {
+        importImagesBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.multiple = true;
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                for (const file of files) {
+                    await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                const ctx = canvas.getContext('2d');
+                                
+                                // Recorte automático de 4% das bordas
+                                const trim = 0.04;
+                                const sx = img.width * trim;
+                                const sy = img.height * trim;
+                                const sw = img.width * (1 - 2 * trim);
+                                const sh = img.height * (1 - 2 * trim);
+                                
+                                ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+                                selectedQRs.push({ canvas, name: '', link: '', timestamp: Date.now(), uploaded: true });
+                                resolve();
+                            };
+                            img.src = ev.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+                renderQRList();
+                renderA4Preview();
+            };
+            input.click();
+        });
+    }
+    
+    if (layoutSelect) {
+        layoutSelect.addEventListener('change', (e) => {
+            layoutPerPage = parseInt(e.target.value);
+            renderA4Preview();
+        });
+    }
+}
+
+function renderQRList() {
+    const qrList = document.getElementById('qrList');
+    const emptyMsg = document.getElementById('emptyListMsg');
+    
+    if (!qrList) return;
+    
+    // Limpar lista exceto a mensagem vazia
+    qrList.innerHTML = '';
+    
+    if (createdQRCodes.length === 0) {
+        qrList.innerHTML = '<p class="empty-list-msg">Nenhum QR Code criado ainda. Crie QR Codes na aba "Criar QR" primeiro.</p>';
+        return;
+    }
+    
+    createdQRCodes.forEach((qr, index) => {
+        const item = document.createElement('div');
+        item.className = 'qr-item' + (selectedQRs.includes(qr) ? ' selected' : '');
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = qr.canvas.width;
+        canvas.height = qr.canvas.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(qr.canvas, 0, 0);
+        
+        const nameEl = document.createElement('div');
+        nameEl.className = 'qr-item-name';
+        nameEl.textContent = qr.name;
+        
+        item.appendChild(canvas);
+        item.appendChild(nameEl);
+        
+        item.addEventListener('click', () => {
+            if (selectedQRs.includes(qr)) {
+                selectedQRs = selectedQRs.filter(q => q !== qr);
+            } else {
+                selectedQRs.push(qr);
+            }
+            renderQRList();
+            renderA4Preview();
+        });
+        
+        qrList.appendChild(item);
+    });
+}
+
+function renderA4Preview() {
+    const a4Page = document.getElementById('a4Page');
+    if (!a4Page) return;
+    
+    a4Page.innerHTML = '';
+    
+    // Configurar grid baseado no layout selecionado
+    const layouts = {
+        1: { cols: 1, rows: 1 },
+        2: { cols: 2, rows: 1 },
+        3: { cols: 3, rows: 1 },
+        4: { cols: 2, rows: 2 },
+        6: { cols: 3, rows: 2 },
+        9: { cols: 3, rows: 3 },
+        12: { cols: 3, rows: 4 },
+        16: { cols: 4, rows: 4 },
+        20: { cols: 4, rows: 5 },
+        24: { cols: 4, rows: 6 }
+    };
+    
+    const layout = layouts[layoutPerPage] || layouts[9];
+    a4Page.style.gridTemplateColumns = `repeat(${layout.cols}, 1fr)`;
+    a4Page.style.gridTemplateRows = `repeat(${layout.rows}, 1fr)`;
+    a4Page.style.gap = layoutPerPage > 12 ? '2mm' : '4mm';
+    a4Page.style.padding = layoutPerPage > 12 ? '5mm' : '10mm';
+    
+    const totalSlots = layoutPerPage;
+    const numQRs = selectedQRs.length;
+    
+    // Renderizar todos os slots (com ou sem QR)
+    for (let i = 0; i < totalSlots; i++) {
+        const slot = document.createElement('div');
+        
+        if (i < numQRs) {
+            // Slot com QR
+            slot.className = 'a4-qr-slot';
+            const qr = selectedQRs[i];
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = qr.canvas.width;
+            canvas.height = qr.canvas.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(qr.canvas, 0, 0);
+            
+            const nameEl = document.createElement('div');
+            nameEl.className = 'slot-name';
+            nameEl.textContent = qr.name;
+            
+            // Botão para remover QR
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'slot-remove-btn';
+            removeBtn.innerHTML = '×';
+            removeBtn.title = 'Remover';
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                selectedQRs.splice(i, 1);
+                renderQRList();
+                renderA4Preview();
+            };
+            
+            slot.appendChild(removeBtn);
+            slot.appendChild(canvas);
+            slot.appendChild(nameEl);
+        } else {
+            // Slot vazio com opção de upload
+            slot.className = 'a4-qr-slot empty';
+            
+            const uploadBtn = document.createElement('button');
+            uploadBtn.className = 'slot-upload-btn';
+            uploadBtn.innerHTML = '+ Upload QR';
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            
+            uploadBtn.onclick = () => fileInput.click();
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    await handleQRImageUpload(file, i);
+                }
+            };
+            
+            slot.appendChild(uploadBtn);
+            slot.appendChild(fileInput);
+        }
+        
+        a4Page.appendChild(slot);
+    }
+}
+
+async function handleQRImageUpload(file, slotIndex) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                // Criar canvas com a imagem
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Recorte automático de 4% das bordas
+                const trim = 0.04;
+                const sx = img.width * trim;
+                const sy = img.height * trim;
+                const sw = img.width * (1 - 2 * trim);
+                const sh = img.height * (1 - 2 * trim);
+                
+                ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+                
+                selectedQRs.splice(slotIndex, 0, {
+                    canvas: canvas,
+                    name: '',
+                    link: '',
+                    timestamp: Date.now(),
+                    uploaded: true
+                });
+                
+                renderQRList();
+                renderA4Preview();
+                resolve();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function generatePDF() {
+    if (selectedQRs.length === 0) {
+        alert('Selecione pelo menos um QR Code para gerar o PDF.');
+        return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    
+    // A4 em mm: 210 x 297
+    const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+    });
+    
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = layoutPerPage > 12 ? 5 : 10;
+    const gap = layoutPerPage > 12 ? 2 : 4;
+    
+    // Configurar layout baseado na seleção
+    const layouts = {
+        1: { cols: 1, rows: 1 },
+        2: { cols: 2, rows: 1 },
+        3: { cols: 3, rows: 1 },
+        4: { cols: 2, rows: 2 },
+        6: { cols: 3, rows: 2 },
+        9: { cols: 3, rows: 3 },
+        12: { cols: 3, rows: 4 },
+        16: { cols: 4, rows: 4 },
+        20: { cols: 4, rows: 5 },
+        24: { cols: 4, rows: 6 }
+    };
+    
+    const layout = layouts[layoutPerPage] || layouts[9];
+    const cols = layout.cols;
+    const rows = layout.rows;
+    const itemsPerPage = cols * rows;
+    
+    const slotWidth = (pageWidth - 2 * margin - (cols - 1) * gap) / cols;
+    const slotHeight = (pageHeight - 2 * margin - (rows - 1) * gap) / rows;
+    
+    // Carregar imagem de fundo (modelo) para cada QR
+    let bgImg = null;
+    try {
+        bgImg = await loadImage('qrmodel/model.jpeg');
+    } catch (e) {
+        console.log('Modelo não carregado, continuando sem background');
+    }
+    
+    for (let i = 0; i < selectedQRs.length; i++) {
+        const posOnPage = i % itemsPerPage;
+        const col = posOnPage % cols;
+        const row = Math.floor(posOnPage / cols);
+        
+        // Nova página se necessário
+        if (posOnPage === 0 && i > 0) {
+            doc.addPage();
+        }
+        
+        const x = margin + col * (slotWidth + gap);
+        const y = margin + row * (slotHeight + gap);
+        
+        // Adicionar moldura/background do modelo para este QR
+        if (bgImg) {
+            doc.addImage(bgImg, 'JPEG', x, y, slotWidth, slotHeight);
+        }
+        
+        // Adicionar borda
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.5);
+        doc.rect(x, y, slotWidth, slotHeight);
+        
+        // Adicionar QR code no quadrado tracejado do molde (inferior direita, 32% do tamanho)
+        const qr = selectedQRs[i];
+        const imgData = qr.canvas.toDataURL('image/png');
+        
+        const qrSize = Math.min(slotWidth * 0.40, slotHeight * 0.40);
+        const qrX = x + (slotWidth * 0.665) - (qrSize / 2);
+        const qrY = y + (slotHeight * 0.67) - (qrSize / 2);
+        
+        doc.addImage(imgData, 'PNG', qrX, qrY, qrSize, qrSize);
+    }
+    
+    doc.save('qr-codes-impressao.pdf');
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
 }

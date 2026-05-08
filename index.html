@@ -13,13 +13,14 @@
 </head>
 
 <body>
-    <div class="install-banner" id="installSection" style="display: none;">
-        <div class="install-banner-text">
-            <span class="install-banner-title">Aplicativo Áudio QR</span>
-            <span class="install-banner-desc">Instale para compartilhar arquivos direto do WhatsApp para cá.</span>
-        </div>
-        <button id="installBtn" class="install-banner-btn">Instalar</button>
-    </div>
+
+
+    <!-- Tabs Navigation -->
+    <nav class="tabs-nav" id="tabsNav">
+        <button class="tab-btn active" data-tab="create">Criar QR</button>
+        <button class="tab-btn" data-tab="print">Imprimir</button>
+        <button id="installBtn" class="tab-install-btn" style="display:none;" title="Instalar app">⬇ Instalar</button>
+    </nav>
 
     <div class="container">
         <header id="mainHeader">
@@ -167,7 +168,50 @@
         </footer>
     </div>
 
+    <!-- Print Tab -->
+    <div class="print-container" id="printContainer" style="display: none;">
+        <div class="print-controls">
+            <h2>Montar Página de Impressão</h2>
+            <p class="print-hint">Selecione os QR Codes criados para montar a página de impressão</p>
+            
+            <div class="layout-selector">
+                <label for="layoutSelect">Moldes por página:</label>
+                <select id="layoutSelect" class="layout-select">
+                    <option value="1">1 molde (1x1)</option>
+                    <option value="2">2 moldes (2x1)</option>
+                    <option value="3">3 moldes (3x1)</option>
+                    <option value="4">4 moldes (2x2)</option>
+                    <option value="6">6 moldes (3x2)</option>
+                    <option value="9" selected>9 moldes (3x3)</option>
+                    <option value="12">12 moldes (3x4)</option>
+                    <option value="16">16 moldes (4x4)</option>
+                    <option value="20">20 moldes (4x5)</option>
+                    <option value="24">24 moldes (4x6)</option>
+                </select>
+            </div>
+            
+            <div class="print-actions">
+                <button id="selectAllBtn" class="btn btn-secondary">Selecionar Todos</button>
+                <button id="clearSelectionBtn" class="btn btn-secondary">Limpar Seleção</button>
+                <button id="importImagesBtn" class="btn btn-secondary">📁 Importar Imagens</button>
+                <button id="generatePdfBtn" class="btn btn-primary">Gerar PDF</button>
+            </div>
+        </div>
+
+        <div class="qr-list" id="qrList">
+            <p class="empty-list-msg" id="emptyListMsg">Nenhum QR Code criado ainda. Crie QR Codes na aba "Criar QR" primeiro.</p>
+        </div>
+
+        <div class="a4-preview-wrapper">
+            <h3>Pré-visualização (Folha A4)</h3>
+            <div class="a4-page" id="a4Page">
+                <!-- QR codes serão posicionados aqui -->
+            </div>
+        </div>
+    </div>
+
     <script src="script.js?v=8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </body>
 
 </html>

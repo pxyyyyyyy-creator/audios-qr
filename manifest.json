@@ -53,6 +53,13 @@
                         ".opus", ".ogg", ".mp3", ".m4a", ".aac",
                         ".wav", ".wma", ".flac", ".amr", ".3gp"
                     ]
+                },
+                {
+                    "name": "image",
+                    "accept": [
+                        "image/*",
+                        ".png", ".jpg", ".jpeg", ".webp"
+                    ]
                 }
             ]
         }
