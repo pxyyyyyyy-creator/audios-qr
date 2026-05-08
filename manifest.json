@@ -47,11 +47,12 @@
                 {
                     "name": "audio",
                     "accept": [
+                        "*/*",
                         "audio/*",
                         "video/*",
                         "application/octet-stream",
                         ".opus", ".ogg", ".mp3", ".m4a", ".aac",
-                        ".wav", ".wma", ".flac", ".amr", ".3gp"
+                        ".wav", ".wma", ".flac", ".amr", ".3gp", ".enc"
                     ]
                 },
                 {

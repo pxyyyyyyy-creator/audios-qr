@@ -1,4 +1,4 @@
-const CACHE_NAME = 'audio-qr-v6';
+const CACHE_NAME = 'audio-qr-v7';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -60,11 +60,24 @@ self.addEventListener('fetch', event => {
 async function handleShareTarget(event) {
     try {
         const formData = await event.request.formData();
-        const audioFile = formData.get('audio');
-        const imageFile = formData.get('image');
+        let audioFile = formData.get('audio');
+        let imageFile = formData.get('image');
+
+        if ((!audioFile || audioFile.size === 0) && (!imageFile || imageFile.size === 0)) {
+            for (const [key, value] of formData.entries()) {
+                if (value instanceof File && value.size > 0) {
+                    if (value.type.startsWith('image/') || value.name.match(/\.(png|jpg|jpeg|webp)$/i)) {
+                        imageFile = value;
+                    } else {
+                        audioFile = value;
+                    }
+                    break;
+                }
+            }
+        }
 
         // Imagem compartilhada → vai para aba de impressão
-        if (imageFile && imageFile.size > 0 && imageFile.type.startsWith('image/')) {
+        if (imageFile && imageFile.size > 0 && (imageFile.type.startsWith('image/') || imageFile.name.match(/\.(png|jpg|jpeg|webp)$/i))) {
             await storeSharedImage(imageFile);
             return Response.redirect('/?shared-image=1', 303);
         }
