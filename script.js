@@ -1032,8 +1032,8 @@ function initPrintTab() {
                                 canvas.height = img.height;
                                 const ctx = canvas.getContext('2d');
                                 
-                                // Recorte automático de 4% das bordas
-                                const trim = 0.04;
+                                // Recorte automático de 1% das bordas
+                                const trim = 0.01;
                                 const sx = img.width * trim;
                                 const sy = img.height * trim;
                                 const sw = img.width * (1 - 2 * trim);
@@ -1213,8 +1213,8 @@ async function handleQRImageUpload(file, slotIndex) {
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
                 
-                // Recorte automático de 4% das bordas
-                const trim = 0.04;
+                // Recorte automático de 1% das bordas
+                const trim = 0.01;
                 const sx = img.width * trim;
                 const sy = img.height * trim;
                 const sw = img.width * (1 - 2 * trim);
