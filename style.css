@@ -1845,9 +1845,9 @@ footer {
 }
 
 .a4-qr-slot canvas {
-    max-width: 40%;
-    max-height: 40%;
-    width: 40%;
+    max-width: 34%;
+    max-height: 34%;
+    width: 34%;
     height: auto;
     display: block;
     position: absolute;

@@ -1334,7 +1334,7 @@ async function generatePDF() {
         const qr = selectedQRs[i];
         const imgData = qr.canvas.toDataURL('image/png');
         
-        const qrSize = finalWidth * 0.40; // Proporção baseada na largura do molde
+        const qrSize = finalWidth * 0.34; // Proporção baseada na largura do molde
         const qrX = x + (finalWidth * 0.665) - (qrSize / 2);
         const qrY = y + (finalHeight * 0.67) - (qrSize / 2);
         
