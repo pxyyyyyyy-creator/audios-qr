@@ -1733,7 +1733,11 @@ footer {
 }
 
 .a4-qr-slot {
-    border: 2px solid var(--gray-200);
+    aspect-ratio: 70 / 99;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -1742,8 +1746,10 @@ footer {
     position: relative;
     background: var(--white);
     transition: all 0.2s ease;
-    padding: 8mm;
+    padding: 0;
+    margin: 0 auto;
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
 }
 
 .a4-qr-slot::before {

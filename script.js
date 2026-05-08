@@ -1279,8 +1279,10 @@ async function generatePDF() {
     const rows = layout.rows;
     const itemsPerPage = cols * rows;
     
-    const slotWidth = (pageWidth - 2 * margin - (cols - 1) * gap) / cols;
-    const slotHeight = (pageHeight - 2 * margin - (rows - 1) * gap) / rows;
+    const cellWidth = (pageWidth - 2 * margin - (cols - 1) * gap) / cols;
+    const cellHeight = (pageHeight - 2 * margin - (rows - 1) * gap) / rows;
+    
+    const targetRatio = 70 / 99;
     
     // Carregar imagem de fundo (modelo) para cada QR
     let bgImg = null;
@@ -1300,26 +1302,41 @@ async function generatePDF() {
             doc.addPage();
         }
         
-        const x = margin + col * (slotWidth + gap);
-        const y = margin + row * (slotHeight + gap);
+        // Calcular dimensões mantendo o aspect ratio do molde original (3x3)
+        let finalWidth, finalHeight;
+        const cellRatio = cellWidth / cellHeight;
+        
+        if (cellRatio > targetRatio) {
+            finalHeight = cellHeight;
+            finalWidth = cellHeight * targetRatio;
+        } else {
+            finalWidth = cellWidth;
+            finalHeight = cellWidth / targetRatio;
+        }
+        
+        const xOffset = (cellWidth - finalWidth) / 2;
+        const yOffset = (cellHeight - finalHeight) / 2;
+        
+        const x = margin + col * (cellWidth + gap) + xOffset;
+        const y = margin + row * (cellHeight + gap) + yOffset;
         
         // Adicionar moldura/background do modelo para este QR
         if (bgImg) {
-            doc.addImage(bgImg, 'JPEG', x, y, slotWidth, slotHeight);
+            doc.addImage(bgImg, 'JPEG', x, y, finalWidth, finalHeight);
         }
         
-        // Adicionar borda
-        doc.setDrawColor(200, 200, 200);
-        doc.setLineWidth(0.5);
-        doc.rect(x, y, slotWidth, slotHeight);
+        // Adicionar borda (opcional, mas ajuda no corte)
+        doc.setDrawColor(230, 230, 230);
+        doc.setLineWidth(0.1);
+        doc.rect(x, y, finalWidth, finalHeight);
         
-        // Adicionar QR code no quadrado tracejado do molde (inferior direita, 32% do tamanho)
+        // Adicionar QR code mantendo a proporção do molde 3x3
         const qr = selectedQRs[i];
         const imgData = qr.canvas.toDataURL('image/png');
         
-        const qrSize = Math.min(slotWidth * 0.40, slotHeight * 0.40);
-        const qrX = x + (slotWidth * 0.665) - (qrSize / 2);
-        const qrY = y + (slotHeight * 0.67) - (qrSize / 2);
+        const qrSize = finalWidth * 0.40; // Proporção baseada na largura do molde
+        const qrX = x + (finalWidth * 0.665) - (qrSize / 2);
+        const qrY = y + (finalHeight * 0.67) - (qrSize / 2);
         
         doc.addImage(imgData, 'PNG', qrX, qrY, qrSize, qrSize);
     }
